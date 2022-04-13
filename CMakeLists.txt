@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.15)
 #
 
 project(
-  "Project"
+  camd
   VERSION 0.1.0
   LANGUAGES CXX
 )
@@ -13,6 +13,8 @@ project(
 #
 # Set project options
 #
+
+string(APPEND CMAKE_CXX_FLAGS "-pthread")
 
 include(cmake/StandardSettings.cmake)
 include(cmake/StaticAnalyzers.cmake)
@@ -22,9 +24,9 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 message(STATUS "Started CMake for ${PROJECT_NAME} v${PROJECT_VERSION}...\n")
 
-if (UNIX)
-    add_compile_options("$<$<CONFIG:DEBUG>:-D_DEBUG>")    #this will allow to use same _DEBUG macro available in both Linux as well as Windows - MSCV environment. Easy to put Debug specific code.
-endif (UNIX)
+if(UNIX)
+  add_compile_options("$<$<CONFIG:DEBUG>:-D_DEBUG>")    #this will allow to use same _DEBUG macro available in both Linux as well as Windows - MSCV environment. Easy to put Debug specific code.
+endif(UNIX)
 
 
 #
@@ -157,23 +159,30 @@ include(cmake/Doxygen.cmake)
 #
 
 # Identify and link with the specific "packages" the project uses
-#find_package(package_name package_version REQUIRED package_type [other_options])
-#target_link_libraries(
-#  ${PROJECT_NAME}
-#  PUBLIC
-#    dependency1 ...
-#  PRIVATE
-#    dependency2 ...
-#    ${PROJECT_NAME}_PROJECT_OPTIONS
-#    ${PROJECT_NAME}_PROJECT_WARNINGS
-#)
-#if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-#  target_link_libraries(
-#    ${PROJECT_NAME}_LIB
-#    PUBLIC
-#      dependency1 ...
-#  )
-#endif()
+find_package(OpenCV REQUIRED)
+find_package(frameworkd REQUIRED)
+find_package(sdbus-c++ REQUIRED)
+find_package(nlohmann_json REQUIRED)
+
+
+include_directories(${OpenCV_INCLUDE_DIRS})
+
+target_link_libraries(
+  ${PROJECT_NAME}
+  PUBLIC
+  frameworkd::frameworkd
+  ${OpenCV_LIBS}
+  #    ${PROJECT_NAME}_PROJECT_OPTIONS
+  #    ${PROJECT_NAME}_PROJECT_WARNINGS
+)
+
+if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
+  target_link_libraries(
+    ${PROJECT_NAME}_LIB
+    frameworkd::frameworkd
+    ${OpenCV_LIBS}
+  )
+endif()
 
 # For Windows, it is necessary to link with the MultiThreaded library.
 # Depending on how the rest of the project's dependencies are linked, it might be necessary

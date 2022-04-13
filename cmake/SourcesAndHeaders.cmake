@@ -1,16 +1,16 @@
-set(sources
-    src/tmp.cpp
+set(
+  sources
+  src/camd.cpp
 )
 
-set(exe_sources
-		src/main.cpp
-		${sources}
+set(
+  exe_sources
+  src/camd.cpp
+  ${sources}
 )
 
-set(headers
-    include/project/tmp.hpp
+set(
+  headers
 )
 
-set(test_sources
-  src/tmp_test.cpp
-)
+set(test_sources)
