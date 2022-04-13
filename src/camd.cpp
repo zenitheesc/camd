@@ -67,6 +67,9 @@ public:
     }
 };
 
+cv::Mat CamdService::frame;
+cv::VideoCapture CamdService::cap;
+
 auto main() -> int
 {
 
