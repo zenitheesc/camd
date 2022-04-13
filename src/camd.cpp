@@ -51,6 +51,17 @@ public:
         std::this_thread::sleep_for(std::chrono::milliseconds(camTurningOnDelay));
     }
 
+    static void takePhoto(std::string filePath)
+    {
+        cap.read(frame);
+
+        if (frame.empty()) {
+            std::cerr << getFileName() + ": ERROR! empty frame \n";
+        }
+
+        cv::imwrite(filePath, frame);
+    }
+
     void destroy() override
     {
     }
