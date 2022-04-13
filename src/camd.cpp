@@ -51,6 +51,24 @@ public:
         std::this_thread::sleep_for(std::chrono::milliseconds(camTurningOnDelay));
     }
 
+    void routine() override
+    {
+        std::string fileName = getFileName();
+        takePhoto(absoluteFilePath + "/" + fileName + ".jpg");
+        std::this_thread::sleep_for(std::chrono::milliseconds(camPhotoDelay));
+    }
+
+    static auto getFileName() -> std::string
+    {
+        std::time_t now = std::time(nullptr);
+        std::string timeStamp(std::ctime(&now));
+
+        std::replace(timeStamp.begin(), timeStamp.end(), ' ', '-');
+        timeStamp.pop_back();
+
+        return timeStamp;
+    }
+
     static void takePhoto(std::string filePath)
     {
         cap.read(frame);
