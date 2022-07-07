@@ -1,0 +1,11 @@
+[Unit]
+Description=Daemon service based on the Frameworkd SDK to take pictures 
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/camd
+ExecReload=/bin/kill -HUP $MAINPID
+SyslogIdentifier=camd
+
+[Install]
+WantedBy=multi-user.target
