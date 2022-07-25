@@ -16,7 +16,7 @@ class CamdService : public RoutineService {
 
     const DBusHandler::Path takePhotoPath {
         "zfkd.dbus.camd",
-        "zfkd/dbus/camd",
+        "/zfkd/dbus/camd",
         "zfkd.dbus.camd",
         "takePhoto"
     };
