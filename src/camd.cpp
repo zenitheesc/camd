@@ -90,7 +90,7 @@ cv::VideoCapture CamdService::cap;
 
 auto main() -> int
 {
-    Daemon camd("camd.json");
+    Daemon camd("camd");
     CamdService camService("camd");
     camd.deploy(camService);
     camd.run();
