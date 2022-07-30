@@ -10,13 +10,13 @@
 class CamdService : public RoutineService {
     static cv::Mat frame;
     static cv::VideoCapture cap;
-    int camTurningOnDelay = 5;
-    std::string absoluteFilePath = "./";
-    int camPhotoDelay = 5000;
+    const int camTurningOnDelay = 6000; // a camera liga depois de 60 segundos
+    const std::string absoluteFilePath = "./";
+    const int camPhotoDelay = 15000; // uma foto a cada 15 segundos
 
     const DBusHandler::Path takePhotoPath {
         "zfkd.dbus.camd",
-        "zfkd/dbus/camd",
+        "/zfkd/dbus/camd",
         "zfkd.dbus.camd",
         "takePhoto"
     };
@@ -32,14 +32,14 @@ public:
         cap.open(0, cv::CAP_ANY);
 
         if (!cap.isOpened()) {
-            std::cerr << "ERRO! Camêra inacessível\n";
+            std::cerr << "ERRO! Câmera inacessível\n";
         }
 
-        DBusHandler::registerMethod(takePhotoPath, [&](nlohmann::json messaWrapper) {
+        DBusHandler::registerMethod(takePhotoPath, [&](nlohmann::json messageWrapper) {
             nlohmann::json response;
 
             try {
-                takePhoto(messaWrapper["filePath"]);
+                takePhoto(messageWrapper["filePath"]);
                 response["error"] = false;
             } catch (...) {
                 response["error"] = true;
@@ -54,8 +54,13 @@ public:
     void routine() override
     {
         std::string fileName = getFileName();
-        takePhoto(absoluteFilePath + "/" + fileName + ".jpg");
-        std::this_thread::sleep_for(std::chrono::milliseconds(camPhotoDelay));
+        try {
+
+            takePhoto(absoluteFilePath + "/" + fileName + ".jpg");
+            std::this_thread::sleep_for(std::chrono::milliseconds(camPhotoDelay));
+        } catch (...) {
+            std::cerr << "ERROR! could not save the picture \n";
+        }
     }
 
     static auto getFileName() -> std::string
@@ -90,7 +95,7 @@ cv::VideoCapture CamdService::cap;
 
 auto main() -> int
 {
-    Daemon camd("camd.json");
+    Daemon camd("camd");
     CamdService camService("camd");
     camd.deploy(camService);
     camd.run();
