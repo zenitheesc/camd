@@ -1,0 +1,7 @@
+{
+	"serviceId": "camd",
+	"proxys": {
+		"camd": {}
+	},
+	"data": {}
+}
